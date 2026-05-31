@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if [[ $# -eq 0 ]]; then
+  lsof -nP -iTCP -sTCP:LISTEN
+  exit 0
+fi
+
+port="$1"
+if [[ "$port" =~ ^[0-9]+$ ]]; then
+  lsof -nP -iTCP:"$port" -sTCP:LISTEN
+else
+  echo "Usage: ports-in-use [port-number]"
+  exit 1
+fi

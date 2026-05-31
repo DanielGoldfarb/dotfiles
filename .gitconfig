@@ -1,0 +1,19 @@
+[user]
+    name = Your Name
+    email = you@example.com
+
+[init]
+    defaultBranch = main
+
+[pull]
+    ff = only
+
+[push]
+    autoSetupRemote = true
+
+[alias]
+    st = status -sb
+    lg = log --oneline --graph --decorate --all
+    co = checkout
+    br = branch
+    last = log -1 --stat

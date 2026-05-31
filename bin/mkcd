@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if [[ $# -ne 1 ]]; then
+  echo "Usage: mkcd <dir>"
+  exit 1
+fi
+
+mkdir -p -- "$1"
+echo "Created: $1"
+echo "Note: this script cannot change your current shell directory."
+echo "Use: cd -- \"$1\""
