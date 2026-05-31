@@ -1,12 +1,14 @@
-# dotfiles-template
+# dotfiles
 
-Reusable Codespaces bootstrap for shell aliases, git config, and small helper scripts.
+Reusable Codespaces bootstrap for shell aliases, git config, Vim settings, and small helper scripts.
 
 ## Included files
 
 - `install.sh`: idempotent installer for this template
 - `.bash_aliases`: shell aliases/functions loaded from `~/.bashrc`
 - `.gitconfig`: optional git defaults and aliases
+- `.vimrc`: Vim defaults
+- `.vim/colors/darkblack.vim`: preferred colorscheme
 - `bootstrap-check.sh`: quick environment and auth checks
 - `bin/mkcd`: create a directory path safely
 - `bin/git-clean-branches`: delete merged local branches
@@ -25,6 +27,13 @@ Then reload your shell:
 ```bash
 source ~/.bashrc
 ```
+
+## Environment Notes
+
+- `CDPATH` is set to `.:/workspaces` for Codespaces navigation.
+- Shell history is synced across multiple open terminals via `history -a; history -n`.
+- WSL-only GUI settings are applied conditionally, including `DISPLAY`, `XDG_RUNTIME_DIR`, `LIBGL_ALWAYS_INDIRECT`, and Windows Chrome as `BROWSER`.
+- Optional local secrets can be loaded from files such as `~/.api.polygon`.
 
 ## Verify GitHub access
 

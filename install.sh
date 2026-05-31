@@ -3,6 +3,7 @@ set -euo pipefail
 
 TEMPLATE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 TARGET_BIN_DIR="$HOME/.local/bin"
+TARGET_VIM_DIR="$HOME/.vim"
 
 backup_if_needed() {
   local target="$1"
@@ -33,9 +34,12 @@ install_link() {
 }
 
 mkdir -p "$TARGET_BIN_DIR"
+mkdir -p "$TARGET_VIM_DIR/colors"
 
 install_link "$TEMPLATE_DIR/.bash_aliases" "$HOME/.bash_aliases"
 install_link "$TEMPLATE_DIR/.gitconfig" "$HOME/.gitconfig"
+install_link "$TEMPLATE_DIR/.vimrc" "$HOME/.vimrc"
+install_link "$TEMPLATE_DIR/.vim/colors/darkblack.vim" "$TARGET_VIM_DIR/colors/darkblack.vim"
 
 for script in "$TEMPLATE_DIR"/bin/*; do
   name="$(basename "$script")"

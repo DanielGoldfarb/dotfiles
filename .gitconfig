@@ -1,6 +1,12 @@
 [user]
-    name = Your Name
-    email = you@example.com
+    name = Daniel Goldfarb
+    email = dgoldfarb.github@gmail.com
+
+[diff]
+    tool = xxdiff
+
+[merge]
+    tool = xxdiff
 
 [init]
     defaultBranch = main
