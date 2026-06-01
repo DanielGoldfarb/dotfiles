@@ -14,7 +14,7 @@ endif
 
 let colors_name = "darkblack"
 
-hi Normal	guifg=lightgrey guibg=lightblue	ctermfg=252 ctermbg=black
+hi Normal	guifg=lightgrey guibg=lightblue	ctermfg=252 ctermbg=16
 hi ErrorMsg	guifg=white guibg=lightblue	ctermfg=white ctermbg=lightblue
 hi Visual	guifg=lightblue guibg=fg	gui=reverse	ctermfg=lightblue ctermbg=fg cterm=reverse
 hi VisualNOS	guifg=lightblue guibg=fg	gui=reverse,underline	ctermfg=lightblue ctermbg=fg cterm=reverse,underline

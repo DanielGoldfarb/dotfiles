@@ -1,0 +1,21 @@
+#!/bin/bash
+
+##   git log
+##   --graph
+##   --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset'
+##   --abbrev-commit -8
+##   git log --pretty=format:'%H %ci %<(17)%an %s' -30 "${@}"
+##   git log --pretty=format:'%ci %<(17)%an %s' -8 --name-only "${@}"
+
+##   FORMAT='%ci %<(17)%an %s'
+
+FORMAT='%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%ci) %C(bold blue)<%an>%Creset'
+
+##   git log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%ci) %C(bold blue)<%an>%Creset' -8 "${@}"
+##   git log --graph --date=format:'%Y-%m-%d %H:%M' --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cd) %C(bold blue)<%an>%Creset' -8 "${@}"
+
+###        --pretty=format:'%Cred%h%Creset %C(green)%cd%Creset %s %C(bold blue)<%an>%Creset %n%C(yellow)%d%Creset'
+
+git log --graph --date=format:'%Y-%m-%d %H:%M' \
+        --pretty=format:'%C(yellow)%h%Creset %C(green)%cd%Creset %s %C(bold blue)<%an>%Creset ' -8 "${@}"
+echo ""
