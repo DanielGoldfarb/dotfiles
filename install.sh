@@ -25,6 +25,12 @@ ensure_bashrc_source() {
   fi
 }
 
+configure_github_git_auth() {
+  if command -v gh >/dev/null 2>&1 && gh auth status -h github.com >/dev/null 2>&1; then
+    gh auth setup-git >/dev/null 2>&1 || true
+  fi
+}
+
 install_link() {
   local src="$1"
   local dest="$2"
@@ -49,6 +55,7 @@ done
 
 chmod +x "$TEMPLATE_DIR/install.sh" "$TEMPLATE_DIR/bootstrap-check.sh"
 ensure_bashrc_source
+configure_github_git_auth
 
 echo
 echo "Install complete."
