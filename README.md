@@ -48,3 +48,35 @@ If private repos are not visible in Codespaces:
 1. Verify exact `OWNER/REPO` on GitHub.
 2. Check Codespaces repository access scope in GitHub settings.
 3. Rebuild/recreate Codespace so token scope is refreshed.
+
+## Pushing to repos other than the codespace repo
+
+Codespaces injects a scoped `GITHUB_TOKEN` that only has write access to the
+repo the codespace was opened from. Pushing to other repos (e.g. this dotfiles
+repo) will fail with a 403 unless you set up a Personal Access Token (PAT).
+
+### One-time setup (done on github.com, persists across all future codespaces)
+
+1. **Create a PAT:**
+   GitHub → Settings → Developer settings → Personal access tokens →
+   Fine-grained tokens → Generate new token.
+   Set access to **All repositories**, permission **Contents: Read and write**.
+
+2. **Store it as a Codespaces secret:**
+   GitHub → Settings → Codespaces → Secrets → New secret.
+   Name: `GH_TOKEN`, value: your PAT, repository access: **All repositories**.
+
+GitHub injects `GH_TOKEN` into every codespace you create. Because the gh CLI
+prefers `GH_TOKEN` over `GITHUB_TOKEN`, and this repo's git config already uses
+`credential.helper = !gh auth git-credential`, all pushes will work
+automatically without any manual login step.
+
+### Per-codespace workaround (if PAT is not set up yet)
+
+```bash
+# One-time login for this codespace session
+env -u GITHUB_TOKEN -u GH_TOKEN gh auth login -h github.com -p https -w
+
+# Push using personal auth
+env -u GITHUB_TOKEN -u GH_TOKEN git push
+```
