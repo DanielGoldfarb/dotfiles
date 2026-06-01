@@ -42,7 +42,7 @@ install_link() {
 mkdir -p "$TARGET_BIN_DIR"
 mkdir -p "$TARGET_VIM_DIR/colors"
 
-install_link "$TEMPLATE_DIR/.bash_aliases" "$HOME/.bash_aliases"
+install_link "$TEMPLATE_DIR/.bashrc" "$HOME/.bash_aliases"
 install_link "$TEMPLATE_DIR/.gitconfig" "$HOME/.gitconfig"
 install_link "$TEMPLATE_DIR/.vimrc" "$HOME/.vimrc"
 install_link "$TEMPLATE_DIR/.vim/colors/darkblack.vim" "$TARGET_VIM_DIR/colors/darkblack.vim"
