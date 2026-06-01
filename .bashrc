@@ -48,6 +48,9 @@ alias gco='git checkout'
 alias gcb='git checkout -b'
 alias gpull='git pull --ff-only'
 alias ports='ports-in-use'
+lastok () {
+  awk '{print $NF}'
+}
 
 # mkcd as a shell function so it can change the current shell directory.
 mkcd() {
