@@ -5,3 +5,4 @@ syntax on
 set background=dark
 colorscheme darkblack
 set nohlsearch
+let g:python_highlight_all = 1

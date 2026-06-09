@@ -1,20 +1,16 @@
 #!/bin/bash
-
-##   git log
-##   --graph
-##   --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset'
-##   --abbrev-commit -8
-##   git log --pretty=format:'%H %ci %<(17)%an %s' -30 "${@}"
-##   git log --pretty=format:'%ci %<(17)%an %s' -8 --name-only "${@}"
-
-##   FORMAT='%ci %<(17)%an %s'
-
-FORMAT='%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%ci) %C(bold blue)<%an>%Creset'
-
-##   git log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%ci) %C(bold blue)<%an>%Creset' -8 "${@}"
-##   git log --graph --date=format:'%Y-%m-%d %H:%M' --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cd) %C(bold blue)<%an>%Creset' -8 "${@}"
-
-###        --pretty=format:'%Cred%h%Creset %C(green)%cd%Creset %s %C(bold blue)<%an>%Creset %n%C(yellow)%d%Creset'
+#
+# gitlog — colorized git log with graph
+#
+# Shows the last 8 commits as a graph with short hash, date, subject, and
+# author. Accepts any 'git log' options/arguments, e.g:
+#   gitlog -20              show last 20 commits
+#   gitlog -- path/to/file  show commits touching a specific file
+#   gitlog --all            include all branches
+#
+# Usage: gitlog [-N] [git-log options] [<revision range>] [[--] <path>...]
+#
+##   FORMAT='%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%ci) %C(bold blue)<%an>%Creset'
 
 git log --graph --date=format:'%Y-%m-%d %H:%M' \
         --pretty=format:'%C(yellow)%h%Creset %C(green)%cd%Creset %s %C(bold blue)<%an>%Creset ' -8 "${@}"

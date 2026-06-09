@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+#
+# gitbranchv — colorized branch list
+#
+# Displays local branches with short hash, commit date, subject line, and
+# author name. A nicer alternative to plain 'git branch -v'.
+#
+# Usage: gitbranchv [git-branch options]
+#
+git branch --format=' %(color:bold blue)%(HEAD)%(color:reset) %(align:18,18)%(refname:short)%(end) %(color:yellow)%(objectname:short)%(color:reset) %(color:green)%(committerdate:format:%Y-%m-%d %H:%M)%(color:reset)  %(contents:subject) %(color:bold blue)<%(authorname)>%(color:reset)' "${@}"
