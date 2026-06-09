@@ -1,0 +1,14 @@
+# Recommended system packages for a full dino environment.
+# Install with:
+#   sudo apt update && xargs sudo apt install -y < apt-packages.txt
+
+# Core tools
+vim
+git
+curl
+jq
+python3
+
+# Git diff/merge tools (xxdiff = classic, meld = modern GUI alternative)
+xxdiff
+meld

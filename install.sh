@@ -42,6 +42,28 @@ ensure_bashrc_loads_dotfiles() {
   fi
 }
 
+install_vim_plugins() {
+  # Uses Vim 8+ native package manager — no plugin manager needed.
+  # Plugins placed in ~/.vim/pack/*/start/ are loaded automatically by Vim.
+  local pack_dir="$HOME/.vim/pack/plugins/start"
+  mkdir -p "$pack_dir"
+
+  # python-syntax: extended Python highlighting incl. f-strings, builtins,
+  # operators, indent/space errors. Activates 'let g:python_highlight_all = 1'
+  # in .vimrc.
+  if [[ ! -d "$pack_dir/python-syntax" ]]; then
+    if command -v git >/dev/null 2>&1; then
+      echo "Installing vim plugin: python-syntax ..."
+      git clone --depth=1 https://github.com/vim-python/python-syntax.git \
+        "$pack_dir/python-syntax"
+    else
+      echo "WARNING: git not found — skipping python-syntax plugin install"
+    fi
+  else
+    echo "vim plugin python-syntax already installed (no change needed)"
+  fi
+}
+
 configure_github_git_auth() {
   if command -v gh >/dev/null 2>&1 && gh auth status -h github.com >/dev/null 2>&1; then
     gh auth setup-git >/dev/null 2>&1 || true
@@ -67,14 +89,17 @@ done
 chmod +x "$DOTFILES_DIR/install.sh" "$DOTFILES_DIR/bootstrap-check.sh"
 
 ensure_bashrc_loads_dotfiles
+install_vim_plugins
 configure_github_git_auth
 
 echo
 echo "Install complete."
 echo
 echo "Next steps:"
-echo "  1. Reload your shell:   source ~/.bashrc"
-echo "  2. Verify environment:  bootstrap-check.sh"
+echo "  1. Reload your shell:      source ~/.bashrc"
+echo "  2. Verify environment:     bootstrap-check.sh"
+echo "  3. Install system packages (if needed):"
+echo "       sudo apt update && xargs sudo apt install -y < apt-packages.txt"
 echo
 echo "For machine-specific settings (venv activation, project aliases, etc.),"
 echo "create ~/.bashrc.local — it will be sourced automatically."
