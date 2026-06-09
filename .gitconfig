@@ -5,6 +5,9 @@
 [diff]
     tool = xxdiff
 
+[difftool "xxdiff"]
+    cmd = xxdiff -w "$LOCAL" "$REMOTE"
+
 [merge]
     tool = xxdiff
 
