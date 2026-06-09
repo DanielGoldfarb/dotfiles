@@ -1,0 +1,5 @@
+#!/bin/bash
+
+git log --date=format:'%Y-%m-%d %H:%M' \
+        --pretty=format:'%C(yellow)%h%Creset %C(green)%cd%Creset %C(cyan)%d%Creset %s %C(bold blue)<%an>%Creset ' -8 "${@}"
+echo ""
