@@ -1,4 +1,12 @@
 #!/usr/bin/env bash
+#
+# gitbranchvs — colorized branch list, sorted by date, with upstream tracking
+#
+# Like gitbranchv but sorted by most-recently-committed first, and includes
+# upstream tracking info (e.g. [origin/main: ahead 1]) and author name.
+#
+# Usage: gitbranchvs [git-branch options]
+#
 
 formatstr="%(color:bold blue)%(HEAD)%(color:reset)"
 formatstr="${formatstr} %(align:18,18)%(refname:short)%(end)"

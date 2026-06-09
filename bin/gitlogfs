@@ -1,4 +1,17 @@
 #!/usr/bin/env python
+"""
+gitlogfs -- per-file last-commit view, sorted by date
+
+For each tracked file in the current git repo, shows the most recent commit
+that touched it, sorted newest-first. Great for answering "what was most
+recently changed in this repo?" at a file-by-file level.
+
+Requires 'gitlog' to be on PATH.
+
+Usage:
+  gitlogfs          show the 12 most recently changed files (default)
+  gitlogfs -N       show the N most recently changed files
+"""
 
 import subprocess as sp
 import sys

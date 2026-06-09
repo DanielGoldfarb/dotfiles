@@ -1,5 +1,13 @@
 #!/bin/bash
-
+#
+# glog — compact colorized git log (no graph)
+#
+# Shows the last 8 commits with hash, date, branch/tag decorations, subject,
+# and author. Like 'gitlog' but without the graph lines and with inline
+# ref decorations. Accepts any 'git log' options/arguments.
+#
+# Usage: glog [-N] [git-log options] [<revision range>] [[--] <path>...]
+#
 git log --date=format:'%Y-%m-%d %H:%M' \
         --pretty=format:'%C(yellow)%h%Creset %C(green)%cd%Creset %C(cyan)%d%Creset %s %C(bold blue)<%an>%Creset ' -8 "${@}"
 echo ""
