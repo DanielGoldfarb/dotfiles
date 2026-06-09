@@ -168,6 +168,36 @@ if [[ -r "$HOME/.api.claude" ]]; then
 fi
 
 # ---------------------------------------------------------------------------
+# Mask API key values in diagnostic commands (env, printenv, set).
+# Prevents accidental exposure when inspecting the environment interactively.
+# These are safety nets only — keys are still readable via /proc/$$/environ,
+# bash -x traces, etc.  Pattern matches any variable containing _API in name.
+# ---------------------------------------------------------------------------
+env() {
+  if [[ $# -eq 0 ]]; then
+    command env | sed 's/^\([^=]*_API[^=]*\)=.*$/\1=*****/'
+  else
+    command env "$@"
+  fi
+}
+
+printenv() {
+  if [[ $# -eq 0 ]]; then
+    command printenv | sed 's/^\([^=]*_API[^=]*\)=.*$/\1=*****/'
+  else
+    command printenv "$@"
+  fi
+}
+
+set() {
+  if [[ $# -eq 0 ]]; then
+    builtin set | sed 's/^\([^=]*_API[^=]*\)=.*$/\1=*****/'
+  else
+    builtin set "$@"
+  fi
+}
+
+# ---------------------------------------------------------------------------
 # Conda / miniconda (skip gracefully if not installed)
 # ---------------------------------------------------------------------------
 if [[ -f "$HOME/miniconda3/etc/profile.d/conda.sh" ]]; then
