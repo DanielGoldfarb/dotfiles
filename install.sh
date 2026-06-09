@@ -22,19 +22,29 @@ install_link() {
   echo "Linked: $dest -> $src"
 }
 
-ensure_bashrc_loads_dotfiles() {
-  # On a fresh Linux/WSL2 machine the system .bashrc already exists and we
-  # don't want to replace it.  Instead we make sure it sources our dotfiles
-  # .bashrc via .bash_aliases (the conventional hook most distros already
-  # include).  In Codespaces the system .bashrc is minimal and the same
-  # approach works.
-  local line='[[ -f "$HOME/.bash_aliases" ]] && source "$HOME/.bash_aliases"'
+ensure_bashrc_sources_dotfiles() {
+  # We do NOT replace ~/.bashrc — it belongs to the system/distro and may
+  # contain distro-specific setup we want to keep (and pick up on future
+  # Ubuntu upgrades).  Instead, we append one line that sources our dotfiles
+  # .bashrc on top.  Duplication of settings (PATH, history, etc.) is harmless
+  # — bash settings are idempotent.
+  local line="[[ -f \"$DOTFILES_DIR/.bashrc\" ]] && source \"$DOTFILES_DIR/.bashrc\""
+
   if [[ ! -f "$HOME/.bashrc" ]]; then
     printf '%s\n' "$line" > "$HOME/.bashrc"
     echo "Created ~/.bashrc with dotfiles source line"
     return
   fi
-  if ! grep -Fq "$line" "$HOME/.bashrc"; then
+
+  # Back up ~/.bashrc before modifying it (only if it's a real file, not already
+  # a symlink — e.g. from a previous install attempt).
+  if [[ ! -L "$HOME/.bashrc" ]]; then
+    local backup="$HOME/.bashrc.bak.$(date +%Y%m%d%H%M%S)"
+    cp "$HOME/.bashrc" "$backup"
+    echo "Backed up ~/.bashrc -> $backup"
+  fi
+
+  if ! grep -Fq "$DOTFILES_DIR/.bashrc" "$HOME/.bashrc"; then
     printf '\n%s\n' "$line" >> "$HOME/.bashrc"
     echo "Added dotfiles source line to ~/.bashrc"
   else
@@ -73,10 +83,9 @@ configure_github_git_auth() {
 mkdir -p "$TARGET_BIN_DIR"
 mkdir -p "$TARGET_VIM_DIR/colors"
 
-# Core dotfiles
-install_link "$DOTFILES_DIR/.bashrc"  "$HOME/.bash_aliases"
+# Core dotfiles (symlinked — backed up automatically if real files exist)
 install_link "$DOTFILES_DIR/.gitconfig" "$HOME/.gitconfig"
-install_link "$DOTFILES_DIR/.vimrc"   "$HOME/.vimrc"
+install_link "$DOTFILES_DIR/.vimrc"     "$HOME/.vimrc"
 install_link "$DOTFILES_DIR/.vim/colors/darkblack.vim" "$TARGET_VIM_DIR/colors/darkblack.vim"
 
 # All scripts in bin/
@@ -88,7 +97,9 @@ done
 
 chmod +x "$DOTFILES_DIR/install.sh" "$DOTFILES_DIR/bootstrap-check.sh"
 
-ensure_bashrc_loads_dotfiles
+# ~/.bashrc: append a source line rather than symlinking, so distro defaults
+# are preserved and future Ubuntu updates are picked up automatically.
+ensure_bashrc_sources_dotfiles
 install_vim_plugins
 configure_github_git_auth
 
