@@ -5,6 +5,11 @@ DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 TARGET_BIN_DIR="$HOME/.local/bin"
 TARGET_VIM_DIR="$HOME/.vim"
 
+# Tee all output (stdout + stderr) to a log file.
+LOG="$DOTFILES_DIR/dotfiles.install.log"
+[[ -f "$LOG" ]] && mv "$LOG" "${LOG}.bak"
+exec > >(tee "$LOG") 2>&1
+
 backup_if_needed() {
   local target="$1"
   if [[ -e "$target" && ! -L "$target" ]]; then

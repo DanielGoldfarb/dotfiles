@@ -2,6 +2,10 @@
 .bashrc.local
 *.bak.*
 
+# Install logs
+dotfiles.install.log
+dotfiles.install.log.bak
+
 # Python
 __pycache__/
 *.pyc
