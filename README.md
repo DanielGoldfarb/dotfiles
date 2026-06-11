@@ -19,7 +19,6 @@ Personal shell environment for Codespaces, WSL2, and plain Linux.
 | `bin/gitbranchv` | Colorized `git branch` with hash, date, message |
 | `bin/gitbranchvs` | Like `gitbranchv` + sorted by date + upstream tracking |
 | `bin/gitlogfs` | Per-file last-commit view, sorted by date (requires Python) |
-| `bin/mkcd` | `mkdir` + `cd` in one step |
 | `bin/git-clean-branches` | Delete merged local branches |
 | `bin/ports-in-use` | Show listening ports and processes |
 
