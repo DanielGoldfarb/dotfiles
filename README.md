@@ -12,6 +12,8 @@ Personal shell environment for Codespaces, WSL2, and plain Linux.
 | `.vim/colors/darkblack.vim` | Preferred colorscheme |
 | `install.sh` | Idempotent installer — safe to re-run |
 | `bootstrap-check.sh` | Quick environment and auth checks |
+| `apt-packages.txt` | Recommended system packages (vim, git, jq, xxdiff, meld, …) |
+| `pip-packages.txt` | Recommended Python packages (pandas, ipython, ruff, black, matplotlib) |
 | `bin/gitlog` | Pretty `git log` with graph and timestamps |
 | `bin/glog` | Alternate compact `git log` view |
 | `bin/gitbranchv` | Colorized `git branch` with hash, date, message |
@@ -32,6 +34,26 @@ source ~/.bashrc
 
 `install.sh` is idempotent — safe to re-run on an existing machine.
 Existing files are backed up (e.g. `.gitconfig.bak.20260101120000`) before being replaced.
+
+## System and Python packages
+
+Neither file is auto-installed. They are reference lists you run manually.
+
+```bash
+# System packages
+sudo apt update && xargs sudo apt install -y < apt-packages.txt
+
+# Python packages
+# Ubuntu 24+ blocks system-wide pip (PEP 668) — activate a venv first:
+python3 -m venv ~/.venvs/base
+source ~/.venvs/base/bin/activate
+pip install -r pip-packages.txt
+
+# Codespaces: no venv needed
+pip install -r pip-packages.txt
+```
+
+Use `bootstrap-check.sh` to see what is already present.
 
 ## Machine-specific settings
 

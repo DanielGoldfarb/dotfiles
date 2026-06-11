@@ -1,0 +1,10 @@
+# Machine-specific overrides — never commit these
+.bashrc.local
+*.bak.*
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
