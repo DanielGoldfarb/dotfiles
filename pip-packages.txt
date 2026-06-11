@@ -11,5 +11,4 @@
 pandas          # lib
 ipython         # cli
 ruff            # cli
-black           # cli
 matplotlib      # lib
