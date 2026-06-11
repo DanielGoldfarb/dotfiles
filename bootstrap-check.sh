@@ -47,6 +47,16 @@ for script in gitlog glog gitbranchv gitbranchvs gitlogfs mkcd git-clean-branche
 done
 
 echo
+echo "== Python packages (pip-packages.txt) =="
+for pkg in pandas ipython ruff black matplotlib; do
+  if python3 -c "import $pkg" >/dev/null 2>&1; then
+    echo "${OK}: $pkg"
+  else
+    echo "${MISS}: $pkg   (pip install -r pip-packages.txt)"
+  fi
+done
+
+echo
 echo "== GitHub auth status =="
 if command -v gh >/dev/null 2>&1; then
   gh auth status -h github.com || true

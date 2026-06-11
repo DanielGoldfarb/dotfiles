@@ -1,0 +1,15 @@
+# Recommended Python packages for a general dino environment.
+# These are cross-project tools, not project-specific dependencies.
+#
+# On Ubuntu 24+ (PEP 668), system-wide pip install is blocked.
+# Activate a venv first, then run:
+#   pip install -r pip-packages.txt
+#
+# On Codespaces, pip install works directly:
+#   pip install -r pip-packages.txt
+
+pandas
+ipython
+ruff
+black
+matplotlib
