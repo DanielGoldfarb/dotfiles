@@ -8,8 +8,8 @@
 # On Codespaces, pip install works directly:
 #   pip install -r pip-packages.txt
 
-pandas
-ipython
-ruff
-black
-matplotlib
+pandas          # lib
+ipython         # cli
+ruff            # cli
+black           # cli
+matplotlib      # lib

@@ -3,26 +3,26 @@ set -euo pipefail
 
 OK='  OK     '
 MISS='  MISSING'
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-echo "== Core tools =="
-for cmd in git gh jq curl vim python3; do
-  if command -v "$cmd" >/dev/null 2>&1; then
-    echo "${OK}: $cmd"
+echo "== apt packages (apt-packages.txt) =="
+while IFS= read -r line; do
+  pkg="${line%%#*}"          # strip inline comment
+  pkg="${pkg//[[:space:]]/}"  # strip whitespace
+  [[ -z "$pkg" ]] && continue
+  if command -v "$pkg" >/dev/null 2>&1; then
+    echo "${OK}: $pkg"
   else
-    echo "${MISS}: $cmd   (sudo apt install $cmd)"
+    echo "${MISS}: $pkg   (sudo apt install $pkg)"
   fi
-done
-
-echo
-echo "== Git diff/merge tools =="
-for cmd in xxdiff meld; do
-  if command -v "$cmd" >/dev/null 2>&1; then
-    echo "${OK}: $cmd"
-  else
-    echo "${MISS}: $cmd   (sudo apt install $cmd)"
-  fi
-done
+done < "$SCRIPT_DIR/apt-packages.txt"
 echo "  (xxdiff and meld are optional; configure preferred tool in .gitconfig)"
+# gh is not in apt-packages.txt (requires its own install method)
+if command -v gh >/dev/null 2>&1; then
+  echo "${OK}: gh"
+else
+  echo "${MISS}: gh   (https://cli.github.com/manual/installation)"
+fi
 
 echo
 echo "== Vim python-syntax plugin =="
@@ -48,22 +48,29 @@ done
 
 echo
 echo "== Python packages (pip-packages.txt) =="
-# pandas and matplotlib are libraries: check via import
-for pkg in pandas matplotlib; do
-  if python3 -c "import $pkg" >/dev/null 2>&1; then
-    echo "${OK}: $pkg"
+# Annotations in pip-packages.txt drive the check type:
+#   # lib  ->  python3 -c "import ..."
+#   # cli  ->  command -v
+while IFS= read -r line; do
+  pkg="${line%%#*}"
+  pkg="${pkg//[[:space:]]/}"
+  [[ -z "$pkg" ]] && continue
+  annotation="${line#*#}"
+  annotation="${annotation//[[:space:]]/}"
+  if [[ "$annotation" == "cli" ]]; then
+    if command -v "$pkg" >/dev/null 2>&1; then
+      echo "${OK}: $pkg"
+    else
+      echo "${MISS}: $pkg   (pip install $pkg  OR  pipx install $pkg)"
+    fi
   else
-    echo "${MISS}: $pkg   (pip install -r pip-packages.txt)"
+    if python3 -c "import $pkg" >/dev/null 2>&1; then
+      echo "${OK}: $pkg"
+    else
+      echo "${MISS}: $pkg   (pip install -r pip-packages.txt)"
+    fi
   fi
-done
-# ipython, ruff, black are CLI tools: check via command -v
-for tool in ipython ruff black; do
-  if command -v "$tool" >/dev/null 2>&1; then
-    echo "${OK}: $tool"
-  else
-    echo "${MISS}: $tool   (pip install -r pip-packages.txt  OR  pipx install $tool)"
-  fi
-done
+done < "$SCRIPT_DIR/pip-packages.txt"
 
 echo
 echo "== GitHub auth status =="
