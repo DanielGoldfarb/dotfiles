@@ -3,7 +3,35 @@ set -euo pipefail
 
 OK='  OK     '
 MISS='  MISSING'
+NOTE='  NOTE   '
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# Detect environment
+if [[ -n "${CODESPACES:-}" ]] || [[ -n "${GITHUB_CODESPACE_TOKEN:-}" ]]; then
+  ENV="codespace"
+elif grep -qi microsoft /proc/version 2>/dev/null; then
+  ENV="wsl2"
+else
+  ENV="linux"
+fi
+
+echo "======================================================"
+case "$ENV" in
+  codespace) echo "  Environment: GitHub Codespaces"
+    echo "  - pip install works directly (no venv needed)"
+    echo "  - GITHUB_TOKEN is injected and scoped to this repo only"
+    echo "  - To push to OTHER repos: ensure GH_TOKEN secret is set to your PAT"
+    echo "  - bootstrap-check.sh is most useful here to catch missing packages" ;;
+  wsl2)      echo "  Environment: WSL2"
+    echo "  - Ubuntu 24+: activate a venv before pip install (PEP 668)"
+    echo "  - DISPLAY/VcXsrv needed for GUI apps (xxdiff, meld)"
+    echo "  - GITHUB_TOKEN/GH_TOKEN should NOT be set here (check below)" ;;
+  linux)     echo "  Environment: Plain Linux"
+    echo "  - Ubuntu 24+: activate a venv before pip install (PEP 668)"
+    echo "  - GITHUB_TOKEN/GH_TOKEN should NOT be set here (check below)" ;;
+esac
+echo "======================================================"
+echo
 
 echo "== apt packages (apt-packages.txt) =="
 while IFS= read -r line; do
@@ -83,8 +111,20 @@ fi
 echo
 echo "== Token mode check =="
 if [[ -n "${GITHUB_TOKEN:-}" ]] || [[ -n "${GH_TOKEN:-}" ]]; then
-  echo "Codespace token variables detected (GITHUB_TOKEN/GH_TOKEN)."
-  echo "To force manual auth, run: env -u GITHUB_TOKEN -u GH_TOKEN gh auth login"
+  if [[ "$ENV" == "codespace" ]]; then
+    echo "${NOTE}: GITHUB_TOKEN is set (normal for Codespaces — scoped to this repo only)."
+    echo "  To push to OTHER repos, ensure GH_TOKEN secret is set to your PAT, then:"
+    echo "  env -u GITHUB_TOKEN gh auth status"
+  else
+    echo "${MISS}: GITHUB_TOKEN or GH_TOKEN is set — unexpected outside Codespaces."
+    echo "  This may cause gh/git to use the wrong credentials."
+    echo "  To fix: unset GITHUB_TOKEN GH_TOKEN  (or remove from your shell config)"
+  fi
 else
-  echo "No injected GH token variables detected."
+  if [[ "$ENV" == "codespace" ]]; then
+    echo "${NOTE}: No injected token — relying on 'gh auth login' credentials."
+    echo "  This is fine if you ran 'gh auth login' manually."
+  else
+    echo "${OK}: No injected GH token variables (correct for $ENV)."
+  fi
 fi
