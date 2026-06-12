@@ -173,3 +173,17 @@ Done. Summary of changes:
 On the auto-run question: keeping it manual is the right call for the PATH reason described above.
 
 Made changes.
+
+User: It just occured to me that if I re-run `install.sh` on a system which was handling ~/.bashrc the old way, then ~/.bashrc_distro is going to source /dotfiles/.bashrc at the end, and then we run it again.  I am thinking this is not a significant concern.   what do you think?
+
+GitHub Copilot: You're right it's not a significant concern. Here's the full picture:
+
+On migration, `~/.bashrc_distro` ends up being the old `~/.bashrc` — distro content plus the appended source line. So `dotfiles/.bashrc` gets sourced twice per shell session: once from inside `~/.bashrc_distro`, once from the managed `~/.bashrc`.
+
+The double-sourcing is harmless in practice:
+- Environment variable assignments are idempotent
+- `PATH` gets the same prefixes prepended twice — slightly ugly but functionally irrelevant (bash will find the right binary either way)
+- `PROMPT_COMMAND` already has an explicit deduplication guard in `dotfiles/.bashrc`, so history sync isn't doubled
+- All `shopt`/`set` options are idempotent
+
+If someone wants a clean migration they can remove the old source line from `~/.bashrc_distro` manually, but there's no need to force that or add detection logic for it. Not worth the complexity.
