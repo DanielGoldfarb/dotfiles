@@ -6,14 +6,14 @@ Personal shell environment for Codespaces, WSL2, and plain Linux.
 
 | File | Purpose |
 |---|---|
-| `.bashrc` | Main shell config (sourced via `.bash_aliases`) |
+| `.bashrc` | Main shell config (sourced via a line appended to `~/.bashrc` by `install.sh`) |
 | `.gitconfig` | Git defaults, aliases, xxdiff tool config |
 | `.vimrc` | Vim settings + Python syntax highlighting |
 | `.vim/colors/darkblack.vim` | Preferred colorscheme |
 | `install.sh` | Idempotent installer — safe to re-run |
 | `bootstrap-check.sh` | Quick environment and auth checks |
 | `apt-packages.txt` | Recommended system packages (vim, git, jq, xxdiff, meld, …) |
-| `pip-packages.txt` | Recommended Python packages (pandas, ipython, ruff, black, matplotlib) |
+| `pip-packages.txt` | Recommended Python packages (pandas, ipython, ruff, matplotlib) |
 | `bin/gitlog` | Pretty `git log` with graph and timestamps |
 | `bin/glog` | Alternate compact `git log` view |
 | `bin/gitbranchv` | Colorized `git branch` with hash, date, message |

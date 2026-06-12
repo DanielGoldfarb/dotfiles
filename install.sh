@@ -31,8 +31,9 @@ ensure_bashrc_sources_dotfiles() {
   # We do NOT replace ~/.bashrc — it belongs to the system/distro and may
   # contain distro-specific setup we want to keep (and pick up on future
   # Ubuntu upgrades).  Instead, we append one line that sources our dotfiles
-  # .bashrc on top.  Duplication of settings (PATH, history, etc.) is harmless
-  # — bash settings are idempotent.
+  # .bashrc at the end.  We do this at the end so for any settings set by
+  # both .bashrc files, dotfiles/.bashrc wins.  Duplication of settings (PATH,
+  # history, etc.) is harmless - bash settings are idempotent.
   local line="[[ -f \"$DOTFILES_DIR/.bashrc\" ]] && source \"$DOTFILES_DIR/.bashrc\""
 
   if [[ ! -f "$HOME/.bashrc" ]]; then
