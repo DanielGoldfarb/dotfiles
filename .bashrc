@@ -131,6 +131,7 @@ alias gcb='git checkout -b'
 alias gpull='git pull --ff-only'
 alias da='deactivate'
 alias ports='ports-in-use'
+alias work='cd /workspaces'
 
 lastok() {
   awk '{print $NF}'
