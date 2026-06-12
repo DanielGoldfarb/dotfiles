@@ -101,6 +101,20 @@ while IFS= read -r line; do
 done < "$SCRIPT_DIR/pip-packages.txt"
 
 echo
+echo "== ~/.bashrc distro upgrade check =="
+for f in "$HOME/.bashrc.dpkg-new" "$HOME/.bashrc.ucf-new"; do
+  if [[ -f "$f" ]]; then
+    echo "${NOTE}: $f exists — apt deposited a new distro ~/.bashrc here."
+    echo "  Review it and apply relevant changes to ~/.bashrc_distro, then delete it:"
+    echo "    diff ~/.bashrc_distro $f"
+    echo "    rm $f"
+  fi
+done
+if [[ ! -f "$HOME/.bashrc.dpkg-new" && ! -f "$HOME/.bashrc.ucf-new" ]]; then
+  echo "${OK}: no pending distro ~/.bashrc update"
+fi
+
+echo
 echo "== GitHub auth status =="
 if command -v gh >/dev/null 2>&1; then
   gh auth status -h github.com || true

@@ -27,35 +27,63 @@ install_link() {
   echo "Linked: $dest -> $src"
 }
 
-ensure_bashrc_sources_dotfiles() {
-  # We do NOT replace ~/.bashrc — it belongs to the system/distro and may
-  # contain distro-specific setup we want to keep (and pick up on future
-  # Ubuntu upgrades).  Instead, we append one line that sources our dotfiles
-  # .bashrc at the end.  We do this at the end so for any settings set by
-  # both .bashrc files, dotfiles/.bashrc wins.  Duplication of settings (PATH,
-  # history, etc.) is harmless - bash settings are idempotent.
-  local line="[[ -f \"$DOTFILES_DIR/.bashrc\" ]] && source \"$DOTFILES_DIR/.bashrc\""
+setup_bashrc() {
+  # ~/.bashrc strategy: on first run, rename the distro ~/.bashrc to
+  # ~/.bashrc_distro and create a clean managed ~/.bashrc that sources it
+  # followed by dotfiles/.bashrc.  Opening ~/.bashrc then immediately shows
+  # exactly what it does — no hunting for a source line buried at the bottom
+  # of a long distro file.
+  #
+  # dotfiles settings take precedence because they are sourced second.
+  #
+  # Idempotency: the rename only happens when ~/.bashrc_distro does not yet
+  # exist.  On subsequent runs, only ~/.bashrc is updated if its content has
+  # changed (e.g. a new source line added here).  The managed file is never
+  # confused with the distro original, so updates never clobber
+  # ~/.bashrc_distro.
+  #
+  # Future distro upgrades: apt never overwrites an existing ~/.bashrc — it
+  # drops the new version as ~/.bashrc.dpkg-new (or ~/.bashrc.ucf-new).
+  # bootstrap-check.sh will alert you if one appears.  Review it and apply
+  # any relevant changes to ~/.bashrc_distro manually.
+  #
+  # Path portability: DOTFILES_DIR is an absolute path resolved from this
+  # script's location, so the embedded source path is correct on WSL2, plain
+  # Linux, Codespaces, or anywhere else the repo is cloned.
+  local distro_bashrc="$HOME/.bashrc_distro"
+  local dotfiles_bashrc="$DOTFILES_DIR/.bashrc"
 
-  if [[ ! -f "$HOME/.bashrc" ]]; then
-    printf '%s\n' "$line" > "$HOME/.bashrc"
-    echo "Created ~/.bashrc with dotfiles source line"
+  # First run: preserve the existing distro ~/.bashrc under its permanent name.
+  if [[ ! -e "$distro_bashrc" ]]; then
+    if [[ -f "$HOME/.bashrc" || -L "$HOME/.bashrc" ]]; then
+      mv "$HOME/.bashrc" "$distro_bashrc"
+      echo "Renamed ~/.bashrc -> ~/.bashrc_distro"
+    fi
+  fi
+
+  # Define the exact managed content.
+  local expected
+  expected=$(cat <<EOF
+# Managed by dotfiles/install.sh -- do not edit by hand.
+[[ -f "$distro_bashrc" ]] && source "$distro_bashrc"
+[[ -f "$dotfiles_bashrc" ]] && source "$dotfiles_bashrc"
+EOF
+)
+
+  if [[ -f "$HOME/.bashrc" ]] && [[ "$(cat "$HOME/.bashrc")" == "$expected" ]]; then
+    echo "~/.bashrc already configured correctly (no change needed)"
     return
   fi
 
-  # Back up ~/.bashrc before modifying it (only if it's a real file, not already
-  # a symlink — e.g. from a previous install attempt).
-  if [[ ! -L "$HOME/.bashrc" ]]; then
+  # Back up whatever is currently there before overwriting.
+  if [[ -f "$HOME/.bashrc" && ! -L "$HOME/.bashrc" ]]; then
     local backup="$HOME/.bashrc.bak.$(date +%Y%m%d%H%M%S)"
     cp "$HOME/.bashrc" "$backup"
     echo "Backed up ~/.bashrc -> $backup"
   fi
 
-  if ! grep -Fq "$DOTFILES_DIR/.bashrc" "$HOME/.bashrc"; then
-    printf '\n%s\n' "$line" >> "$HOME/.bashrc"
-    echo "Added dotfiles source line to ~/.bashrc"
-  else
-    echo "~/.bashrc already sources dotfiles (no change needed)"
-  fi
+  printf '%s\n' "$expected" > "$HOME/.bashrc"
+  echo "Wrote managed ~/.bashrc (sources ~/.bashrc_distro then dotfiles/.bashrc)"
 }
 
 install_vim_plugins() {
@@ -103,9 +131,9 @@ done
 
 chmod +x "$DOTFILES_DIR/install.sh" "$DOTFILES_DIR/bootstrap-check.sh"
 
-# ~/.bashrc: append a source line rather than symlinking, so distro defaults
-# are preserved and future Ubuntu updates are picked up automatically.
-ensure_bashrc_sources_dotfiles
+# ~/.bashrc: rename the distro original to ~/.bashrc_distro and write a clean
+# managed ~/.bashrc that sources it followed by dotfiles/.bashrc.
+setup_bashrc
 install_vim_plugins
 configure_github_git_auth
 

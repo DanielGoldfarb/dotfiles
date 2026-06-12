@@ -6,7 +6,7 @@ Personal shell environment for Codespaces, WSL2, and plain Linux.
 
 | File | Purpose |
 |---|---|
-| `.bashrc` | Main shell config (sourced via a line appended to `~/.bashrc` by `install.sh`) |
+| `.bashrc` | Main shell config; `install.sh` saves the distro `~/.bashrc` as `~/.bashrc_distro` and writes a managed `~/.bashrc` that sources `~/.bashrc_distro` then this file |
 | `.gitconfig` | Git defaults, aliases, xxdiff tool config |
 | `.vimrc` | Vim settings + Python syntax highlighting |
 | `.vim/colors/darkblack.vim` | Preferred colorscheme |
@@ -33,6 +33,14 @@ source ~/.bashrc
 
 `install.sh` is idempotent — safe to re-run on an existing machine.
 Existing files are backed up (e.g. `.gitconfig.bak.20260101120000`) before being replaced.
+On first run, the distro `~/.bashrc` is renamed to `~/.bashrc_distro` and replaced with a
+two-line managed `~/.bashrc` that sources `~/.bashrc_distro` then `dotfiles/.bashrc`.
+Opening `~/.bashrc` is then immediately self-documenting.
+
+**Distro upgrades:** when apt ships a new default `~/.bashrc` it never overwrites an
+existing one — it drops it alongside as `~/.bashrc.dpkg-new` (or `~/.bashrc.ucf-new`).
+Run `bootstrap-check.sh` to be alerted if one appears; review it and manually apply any
+relevant changes to `~/.bashrc_distro`.
 
 ## System and Python packages
 
