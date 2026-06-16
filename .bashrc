@@ -132,6 +132,7 @@ alias gpull='git pull --ff-only'
 alias da='deactivate'
 alias ports='ports-in-use'
 alias work='cd /workspaces'
+alias dotfiles='cd /workspaces/.codespaces/.persistedshare/dotfiles'
 
 lastok() {
   awk '{print $NF}'

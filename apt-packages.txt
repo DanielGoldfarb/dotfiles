@@ -8,6 +8,7 @@ git
 curl
 jq
 python3
+rsync
 
 # Git diff/merge tools (xxdiff = classic, meld = modern GUI alternative)
 xxdiff
